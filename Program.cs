@@ -18,6 +18,9 @@ while (choice != 0)
     Console.WriteLine("4. List my folders");
     Console.WriteLine("5. Get email ID");
     Console.WriteLine("6. Share folder with someone");
+    Console.WriteLine("7. Create folder");
+    Console.WriteLine("8. Create Subfolder");
+    Console.WriteLine("9. Create a sharing link for a driveItem");
 
     try
     {
@@ -58,6 +61,18 @@ while (choice != 0)
         case 6:
             // Run any Graph code
             await shareFolderWithSomeone();
+            break;
+        case 7:
+            // Run any Graph code
+            await CreateFolder();
+            break;
+        case 8:
+            // Run any Graph code
+            await CreateSubFolder();
+            break;
+        case 9:
+            // Run any Graph code
+            await CreateASharingLink();
             break;
         default:
             Console.WriteLine("Invalid choice! Please try again.");
@@ -196,4 +211,21 @@ async Task shareFolderWithSomeone()
 {
     await GraphHelper.shareFolderWithSomeone("01P4IMMEXS4NEHSACETVEJXT34IJF2NF4W");
 
+}
+
+async Task CreateFolder()
+{
+    await GraphHelper.CreateFolder("818f2a17-095d-4e9f-887c-fcd535cf9445");
+
+}
+
+async Task CreateSubFolder()
+{
+    await GraphHelper.CreateSubFolder();
+
+}
+
+async Task CreateASharingLink()
+{
+    await GraphHelper.CreateASharingLink();
 }

@@ -2,6 +2,7 @@ using Azure.Core;
 using Azure.Identity;
 using Microsoft.Graph;
 
+
 class GraphHelper
 {
     // Settings object
@@ -174,6 +175,113 @@ class GraphHelper
         {
             Console.WriteLine("Erro grant to permission: " + ex.Message);
         }
+    }
+
+    public async static Task CreateFolder(string emailID)
+    {
+
+        // Ensure client isn't null
+        _ = _userClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for user auth");
+
+        //Creating folder
+        var folder = new DriveItem
+        {
+            Name = "folder test",
+            Folder = new Folder(),
+            AdditionalData = new Dictionary<string, object>
+                {
+                    { "@microsoft.graph.conflictBehavior", "rename" }
+                }
+        };
+
+        try
+        {
+            var createdFolder = await _userClient
+                .Drives[emailID]
+                .Items
+                .Request()
+                .AddAsync(folder);
+
+            Console.WriteLine("Folder created successfully");
+            Console.WriteLine($"Folder ID: {createdFolder.Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating subfolder: {ex.Message}");
+        }
+
+
+    }
+
+    public async static Task CreateSubFolder()
+    {
+
+        // Ensure client isn't null
+        _ = _userClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for user auth");
+
+
+        var userID = "818f2a17-095d-4e9f-887c-fcd535cf9445";
+        var parentFolderId = "01P4IMMET4XJMVXGRL2FFLTWXFCJ3KJUZK"; //POWER APPS
+        //Creating folder
+        var subfolder = new DriveItem
+        {
+            Name = "subfolder test",
+            Folder = new Folder(),
+            AdditionalData = new Dictionary<string, object>
+                {
+                    { "@microsoft.graph.conflictBehavior", "rename" }
+                }
+        };
+
+        try
+        {
+            var createdSubfolder = await _userClient.Drives[userID].Items[parentFolderId].Children.Request().AddAsync(subfolder);
+
+            Console.WriteLine("Subfolder created successfully");
+            Console.WriteLine($"Subfolder ID: {createdSubfolder.Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating subfolder: {ex.Message}");
+        }
+
+
+    }
+
+    public async static Task CreateASharingLink()
+    {
+        // Ensure client isn't null
+        _ = _userClient ??
+            throw new System.NullReferenceException("Graph has not been initialized for user auth");
+
+        //var emailAddress = "gtorres@seisistemas.com.br";
+        // Create a sharing link for the item
+        var link = new Permission
+        {
+            Link = new SharingLink
+            {
+                Type = "view",
+                Scope = "organization"
+            },
+            Roles = new List<string> { "read" }
+        };
+
+        try
+        {
+            //testando folder
+            var response = await _userClient.Me.Drive.Items["01P4IMMERKF6RKTOF6ZZF3TGDM6RHKEG3Q"].CreateLink("view", "organization").Request().PostAsync();
+            // The response will contain the created sharing link, which you can use to share the item with others
+            var sharingLink = response.Link.WebUrl;
+            Console.WriteLine(sharingLink);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating link: {ex.Message}");
+        }
+
     }
 
 }
